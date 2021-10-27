@@ -16,16 +16,26 @@ class Layout
      * @var string
      */
         private $title;
+    /**
+     * @var Request
+     */
+        private $request;
 
     /**
      * @param $page
      * @param string $name
      * @param string $title
      */
-        public function __construct(string $page,string $name ='default',string $title = 'APSL Website'){
+        public function __construct(
+            Request $request,
+            string $page,
+            string $name ='default',
+            string $title = 'APSL Website'
+        ){
             $this->page = $page;
             $this->name = $name;
             $this->title = $title;
+            $this->request=$request;
 
         }
 
@@ -48,6 +58,9 @@ class Layout
         private function  renderTemplate(): string
         {
             ob_start();
+            extract([
+                'request'=>$this->request
+            ]);
             include "../templates/{$this->page}.php";
             return ob_get_clean();
         }
