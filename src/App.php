@@ -18,12 +18,14 @@ class App
     /**
      * Uruchamia apke.
      */
+
     public function run(): void{
         //$this->processRouting();
         $this->request = Request::initialize();
         $router = new Router($this->getRoutes());
         $page = $router->match($this->request);
         $layout = new Layout($this->request,$page);
+        echo $router->generateUrl('article',['id'=>40]);
         $layout->render();
     }
     /**
