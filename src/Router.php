@@ -29,7 +29,7 @@ class Router
             $params = $this->checkRoute($routeSegments, $requestPathSegments);
             if ($params !== false) {
                 $request->setPathParameters($params);
-                return $routeConfig['page'];
+                return $routeConfig['controller'] ?? $routeConfig['page'];
             }
         }
         throw new \Exception('Page not found! Sorry!');
@@ -55,8 +55,11 @@ class Router
         return $params;
     }
 
-    public function generateUrl($name, $parameters = null)
+    public function generateUrl($name, $parameters = [])
     {
+        if (!isset($this->routes[$name])) {
+            throw new \Exception(sprintf('Route "%s" not found.', $name));
+        }
         foreach ($this->routes as $key => $value) {
             if ($key === $name){
                 $url = $value['path'];

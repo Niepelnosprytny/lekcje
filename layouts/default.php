@@ -2,7 +2,7 @@
 <head>
 	<title><?php echo $title ?></title>
 </head>
-<body>?>
+<body>
 	<h1>Hello APSL!</h1>
     <a href="/">Main PAGE</a><br />
     <a href="/body">BODY PAGE</a><br />

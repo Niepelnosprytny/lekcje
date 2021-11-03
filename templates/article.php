@@ -2,4 +2,4 @@
 
 <?php
 
-var_dump ($request->getParameter('id'));
+var_dump ($router->generateUrl('article',['id'=>30]));
