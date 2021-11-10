@@ -42,13 +42,15 @@ class Layout
     /**
      * process layout
      */
-        public  function  render()
+        public  function  render(): string
         {
             extract([
                 'title'=>$this->title,
                 'content'=> $this->renderTemplate()
             ]);
+            ob_start();
             include __DIR__."/../layouts/{$this->name}.php";
+            return ob_get_clean();
 
         }
 

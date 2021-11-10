@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Controllers\PageController;
 use App\Controllers\SimpleController;
 
 class ServiceContainer
@@ -12,26 +13,41 @@ class ServiceContainer
 
     private function __construct()
     {
-        $this->services['router'] = new Router(
-            [
-            'homepage' => [
-                'path'=>'/',
-                'page'=>'home'
-            ],
-            'article' => [
-                'path'=>'/article/{id}',
-                'page'=>'article'
-            ],
-            'body' => [
-                'path'=>'/body',
-                'page'=>'body'
-            ],
-            'responseTest' => [
-                'path'=>'/jsonTest',
-                'controller' => new SimpleController()
-            ]
-        ]
-        );
+        $this->services['router'] = function() {
+            return new Router(
+                [
+                    'homepage' => [
+                        'path'=>'/',
+                        //'page'=>'home'
+                        'controller'=> function() {
+                    return new PageController('home','default');
+                }
+                    ],
+                    'article' => [
+                        'path'=>'/article/{id}',
+                        'controller'=> function() {
+                            return new PageController('article','default');
+                }
+
+                    ],
+                    'body' => [
+                        'path'=>'/body',
+                        'controller'=> function() {
+                    return new PageController('body','default');
+                }
+
+                    ],
+                    'responseTest' => [
+                        'path'=>'/jsonTest',
+                        'controller' => function() {
+                    return new SimpleController();
+                }
+
+                    ]
+                ]
+            );
+        };
+
     }
 
     /**
@@ -57,7 +73,7 @@ class ServiceContainer
             throw new \Exception(sprintf('Selected service %s was not found',$id));
         }
 
-        return $this->services[$id];
+        return $this->services[$id]($this);
     }
 
     /**

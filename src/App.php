@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Controllers\ControllerInterface;
+use App\Response\ErrorResponse;
 
 /**
  * Application entry point.
@@ -22,40 +23,31 @@ class App
      */
 
     public function run(): void{
+
+
         //$this->processRouting();
+
         $this->request = Request::initialize();
         $serviceContainer = ServiceContainer::getInstance();
         $router = $serviceContainer->getService('router');
+try {
+    $matchedRoute = $router->match($this->request);
+    $response = $matchedRoute($this->request);
 
-        $matchedRoute = $router->match($this->request);
-        if($matchedRoute instanceof ControllerInterface){
-            $response = $matchedRoute($this->request);
-            foreach ($response->getHeaders() as $header){
-                header($header);
-            }
-
-            echo $response->getBody();
-
-        }
-        else{
-        $layout = new Layout($this->request,$matchedRoute);
-        $layout->render();
-        }
+    foreach ($response->getHeaders() as $header) {
+        header($header);
     }
 
-/**
- * Pobiera parametr i wyswietla strone zadana przez uzytkownika
- */
-    private function processRouting(): void
-    {
-        $page = $_GET['page'] ?? 'home';
-
-        if(!preg_match('/^[a-z0-9]+$/',$page)){
-            $page = 'home';
-        }
-
-        $this->page=$page;
-    }
-
-
+    echo $response->getBody();
 }
+catch(\Exception $exception) {
+    echo "strona nie znaleziona";
+    new Response\Response('home');
+}
+        }
+
+
+    }
+
+
+

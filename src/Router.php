@@ -2,6 +2,9 @@
 
 namespace App;
 
+use App\Controllers\ControllerInterface;
+use App\Response\ErrorResponse;
+
 class Router
 {
     /**
@@ -19,6 +22,7 @@ class Router
 
     public function match(Request $request)
     {
+
         $trimmedRequestPath = ltrim($request->getPath(),'/');
         $requestPathSegments = explode('/', $trimmedRequestPath);
 
@@ -29,11 +33,21 @@ class Router
             $params = $this->checkRoute($routeSegments, $requestPathSegments);
             if ($params !== false) {
                 $request->setPathParameters($params);
-                return $routeConfig['controller'] ?? $routeConfig['page'];
+                $controllerFactory = $routeConfig['controller']?? null;
+                if(is_callable($controllerFactory)){
+                    return $controllerFactory();
+                }
+                else if ($controllerFactory instanceof ControllerInterface){
+                 return $controllerFactory;
+                }
+
+                throw new \Exception('Page not found! Sorry!');
             }
         }
         throw new \Exception('Page not found! Sorry!');
-    }
+
+
+        }
 
     /**
      * @param array $routeSegments
