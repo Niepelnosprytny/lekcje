@@ -4,13 +4,13 @@
 </head>
 <body>
 	<h1>Hello APSL!</h1>
-    <a href="/">Main PAGE</a><br />
-    <a href="/body">BODY PAGE</a><br />
-    <a href=/article/{id}>Article PAGE</a>
-<!--    napisac generate uri, ma zadanie przyjac 2 parametry.-->
-<!--    1 nazwa, 2 parametry routingu w wyniku-->
-<!--    /strona/parametry w oparciu o router match-->
-<!--    z danych generowac sciezka do a href-->
+    <a href="<?php echo $router->generate('home')?>">Main PAGE</a><br />
+    <a href="<?php echo $router->generate('body')?>">BODY PAGE</a><br />
+    <a href="<?php echo $router->generate('article', ['id'=>2])?>">Article PAGE</a>
     <?php echo $content ?>
+    <?php var_dump($session) ?>
+    <?php var_dump($session->get('user','Anon')) ?>
+
+
 </body>
 </html>
