@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Session;
 
 class Session
@@ -6,13 +7,13 @@ class Session
     /**
      * @var bool
      */
-    private $sessionStarted = false;
+    private bool $sessionStarted = false;
 
-    private $flashMessages;
+    private array $flashMessages;
 
     public function __construct()
     {
-      //TODO: maybe initialize flash messages.
+        //TODO: maybe initialize flash messages?
     }
 
     public function start()
@@ -20,9 +21,10 @@ class Session
         $this->sessionStarted = true;
         session_start();
     }
+
     public function close()
     {
-        if(!$this->sessionStarted){
+        if (!$this->sessionStarted) {
             $this->start();
         }
         session_write_close();
@@ -30,56 +32,68 @@ class Session
 
     public function destroy()
     {
-        if(!$this->sessionStarted){
+        if (!$this->sessionStarted) {
             $this->start();
         }
         session_destroy();
     }
-    public function has(string $name):bool
+
+    public function has(string $name): bool
     {
-        if(!$this->sessionStarted){
+        if (!$this->sessionStarted) {
             $this->start();
         }
-     return  isset($_SESSION[$name]);
+        return isset($_SESSION[$name]);
     }
 
-    public function get(string $name,$default = null)
+    public function get(string $name, $default = null)
     {
-        if(!$this->sessionStarted){
+        if (!$this->sessionStarted) {
             $this->start();
         }
+
         return $_SESSION[$name] ?? $default;
     }
-    public function set(string $name,$value)
+
+    public function set(string $name, $value, $isGlobal = false)
     {
-        if(!$this->sessionStarted){
+        if ($isGlobal) {
+            $globals = json_decode(($_SESSION['globals'] ?? '[]'), true);
+            $globals[$name] = null;
+            $_SESSION['globals'] = json_encode($globals);
+        }
+
+        if (!$this->sessionStarted) {
             $this->start();
         }
+
         $_SESSION[$name] = $value;
     }
-    public function  remove(string $name)
+
+    public function remove(string $name)
     {
         unset($_SESSION[$name]);
     }
+
     public function regenerate()
     {
-        if(!$this->sessionStarted){
+        if (!$this->sessionStarted) {
             $this->start();
         }
-        $currentVars=[];
-        $globals =json_decode($_SESSION['globals']??'[]',true);
+        $currentVars = [];
+        $globals = json_decode($_SESSION['globals'] ?? '[]', true);
 
         foreach (array_keys($globals) as $key) {
             $currentVars[$key] = $this->get($key);
-
         }
+
         $this->destroy();
         session_id(session_create_id());
         $this->start();
 
-        foreach ($currentVars as $key => $value){
-            $this->set($key,$value,true);
+        foreach ($currentVars as $key => $value) {
+            $this->set($key, $value, true);
         }
-        $_SESSION['globals'] =  $globals;
+        $_SESSION['globals'] = $globals;
     }
 }

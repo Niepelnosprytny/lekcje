@@ -2,13 +2,12 @@
 
 namespace App\Controllers;
 
-use App\ServiceContainer;
-use App\Session\Session;
 use App\Layout;
 use App\Request;
 use App\Response\LayoutResponse;
 use App\Response\Response;
 use App\Router;
+use App\ServiceContainer;
 
 class PageController implements ControllerInterface
 {
@@ -43,13 +42,10 @@ class PageController implements ControllerInterface
      */
     public function __invoke(Request $request): Response
     {
-        $session = ServiceContainer::getInstance()->get('session');
-        $session->start();
-        $session->set('user', "Arek");
         return new LayoutResponse($this->name, [
             'request' => $request,
             'router' => $this->router,
-            'session' => $session
+            'session' => ServiceContainer::getInstance()->get('session')
         ], $this->layout);
     }
 }

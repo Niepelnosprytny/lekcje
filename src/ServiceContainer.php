@@ -2,6 +2,9 @@
 
 namespace App;
 
+use App\Controllers\DoLoginController;
+use App\Controllers\LogoutController;
+use App\Controllers\SimpleController;
 use App\Session\Session;
 use App\Controllers\PageController;
 
@@ -35,8 +38,23 @@ class ServiceContainer
                 }
             ]);
 
-            $router->addRoute('invalid', [
-                'path' => '/invalid'
+            $router->addRoute('do_login', [
+                'path' => '/do_login',
+                'controller' => function() use ($router){
+                    return new DoLoginController(
+                        $this->get('session'),
+                        $router
+                    );
+                }
+            ]);
+            $router->addRoute('logout', [
+                'path' => '/logout',
+                'controller' => function() use ($router){
+                    return new LogoutController(
+                        $this->get('session'),
+                        $router
+                    );
+                }
             ]);
 
             return $router;
