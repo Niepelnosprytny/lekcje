@@ -27,6 +27,8 @@ class App
      */
     public function run(): void
     {
+        $csv = new CsvUserRepository();
+        var_dump($csv->findCredentialsByUsername("test3"));
         //$this->processRouting();
         $this->request = Request::initialize();
         $serviceContainer = ServiceContainer::getInstance();
